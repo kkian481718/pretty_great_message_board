@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">pretty_great_message_board</string>
+    <string name="userpic">userpic</string>
+    <string name="input_username">請輸入名稱</string>
+    <string name="button_send_msg">好ㄌ送出！</string>
+    <string name="button_cancel">取消</string>
+    <string name="input_title">請輸入標題</string>
+    <string name="input_content">請輸入內容</string>
+</resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "621710293898",
+    "project_id": "message-board-4181d",
+    "storage_bucket": "message-board-4181d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621710293898:android:55262595ef2a68ffbea673",
+        "android_client_info": {
+          "package_name": "com.example.pretty_great_message_board"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621710293898-2gvolpiclgrg6ejor54iq1r6fdfklfb4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgXW_Kt_mzu09YSI3U2lzOtARFsixBo4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "621710293898-2gvolpiclgrg6ejor54iq1r6fdfklfb4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
