@@ -23,8 +23,10 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_weight="1"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/userpic"
-            tools:srcCompat="@drawable/sparkles" />
+            android:scaleType="centerInside"
+            tools:srcCompat="@drawable/portrait" />
 
         <EditText
             android:id="@+id/editTextTextPersonName"
@@ -35,31 +37,16 @@
             android:ems="10"
             android:hint="@string/input_username"
             android:inputType="textPersonName"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:textColorHint="#757575" />
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/input_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="76dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:minHeight="48dp"
-        android:hint="@string/input_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        android:autofillHints="" />
 
     <EditText
         android:id="@+id/input_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="98dp"
         android:layout_marginEnd="16dp"
         android:autofillHints=""
         android:ems="10"
@@ -69,8 +56,9 @@
         android:minHeight="48dp"
         android:textColorHint="#757575"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/input_title" />
+        app:layout_constraintTop_toBottomOf="@+id/switch_anonymous" />
 
     <Button
         android:id="@+id/button_send_msg"
@@ -95,4 +83,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_send_msg" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_anonymous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:text="@string/switch_anonymous"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
