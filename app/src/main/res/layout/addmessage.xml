@@ -29,7 +29,7 @@
             tools:srcCompat="@drawable/portrait" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/input_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
