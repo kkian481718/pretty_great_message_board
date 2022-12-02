@@ -10,4 +10,6 @@
     <string name="button_addMessage">新增留言！</string>
     <string name="tv_content">[ Content ]</string>
     <string name="tv_timestamp">[ timestamp ]</string>
+    <string name="errorText">資料正常。</string>
+    <string name="textView3">TextView</string>
 </resources>

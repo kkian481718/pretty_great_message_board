@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +49,7 @@ public class messageBoard extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(messageBoard.this, addMessage.class));
+                //new Async.execute();
             }
         });
 
@@ -75,12 +80,11 @@ public class messageBoard extends AppCompatActivity {
 
     private void initData() throws IOException, JSONException {
 
-        /** 0. get data from MySQL or Firebase */
+        // 0. get data from MySQL or Firebase
         get_data_from_mySQL();
-        //get_data_from_firebase();
 
 
-        /** 1. read data from "card_data.json" */
+        // 1. read data from "card_data.json"
         InputStream in = getResources().openRawResource(R.raw.card_data);
         BufferedReader rd = new BufferedReader(new InputStreamReader(in));
 
@@ -97,7 +101,7 @@ public class messageBoard extends AppCompatActivity {
         JSONArray card_JSONarray = new JSONArray(sb.toString());
 
 
-        /** 2. transform the data into (list)card_list */
+        // 2. transform the data into (list)card_list
         card_list = new ArrayList<>();
 
         for (int i = (card_JSONarray.length() - 1); i >= 0; i--) {
@@ -113,12 +117,11 @@ public class messageBoard extends AppCompatActivity {
             card_list.add(card);
         }
 
-
-        /** 3. print it onto RecycleView. */
+        // 3. print it onto RecycleView.
         initView();
     }
 
-    // plan A：mySQL
+    // mySQL
     private void get_data_from_mySQL() {
 
         // TODO: 之後在這裡加上從mySQL抓資料的副程式
@@ -128,29 +131,6 @@ public class messageBoard extends AppCompatActivity {
             1. download data from MySQL
             2. save data into "card_data.json"
         */
-    }
-    // plan B: Firebase (not finished yet)
-    private void get_data_from_firebase() {
-
-        // Read data from the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                // String value = (String) dataSnapshot.getValue();
-                // Log.d(TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
     private void initView() {
