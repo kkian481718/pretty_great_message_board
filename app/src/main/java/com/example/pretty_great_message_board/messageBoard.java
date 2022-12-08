@@ -1,42 +1,25 @@
 package com.example.pretty_great_message_board;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class messageBoard extends AppCompatActivity {
 
-    private List<Card> card_list;
-    private Button button;
+    List<Card> card_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +27,11 @@ public class messageBoard extends AppCompatActivity {
         setContentView(R.layout.message_board);
 
         // Btn: go to "addMessage"
-        button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(messageBoard.this, addMessage.class));
-                //new Async.execute();
-            }
-        });
+        Button button_add = findViewById(R.id.button);
+        button_add.setOnClickListener(v -> startActivity(new Intent(messageBoard.this, addMessage.class)));
 
         // initialize the recycleView
-        try {
-            initData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        initData();
     }
 
     @Override
@@ -68,69 +39,20 @@ public class messageBoard extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onRestart();
 
-        //Do your code here
-        try {
-            initData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // initialize the recycleView
+        initData();
     }
 
-    private void initData() throws IOException, JSONException {
-
-        // 0. get data from MySQL or Firebase
-        get_data_from_mySQL();
-
-
-        // 1. read data from "card_data.json"
-        InputStream in = getResources().openRawResource(R.raw.card_data);
-        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-
-        String line = "";
-        StringBuilder sb = new StringBuilder();
+    private void initData() {
+        new Async().execute(); // update RecycleView.
         try {
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            Thread.sleep(2000);
+            // TODO: 等待兩秒讓資料載入，如果在Thread裡面呼叫initView，都會報錯
+            initView();
         }
-
-        JSONArray card_JSONarray = new JSONArray(sb.toString());
-
-
-        // 2. transform the data into (list)card_list
-        card_list = new ArrayList<>();
-
-        for (int i = (card_JSONarray.length() - 1); i >= 0; i--) {
-
-            Card card = new Card();
-            JSONObject card_new_obj = card_JSONarray.getJSONObject(i);
-
-            card.setId("# " + (i+1));
-            card.setTimestamp("Time |  " + card_new_obj.getString("Timestamp"));
-            card.setUsername("@" + card_new_obj.getString("Username"));
-            card.setContent(card_new_obj.getString("Content"));
-
-            card_list.add(card);
+        catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
-
-        // 3. print it onto RecycleView.
-        initView();
-    }
-
-    // mySQL
-    private void get_data_from_mySQL() {
-
-        // TODO: 之後在這裡加上從mySQL抓資料的副程式
-
-        /*
-            [ what should this block do? ]
-            1. download data from MySQL
-            2. save data into "card_data.json"
-        */
     }
 
     private void initView() {
@@ -140,4 +62,65 @@ public class messageBoard extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cardAdapter);
     }
+
+    @SuppressLint("StaticFieldLeak")
+    class Async extends AsyncTask<Void, Void, Void> {
+
+        String error = "";
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            try {
+
+                /** INFO of message_board(table)
+                 * [variables]
+                 *  Timestamp,  type = timestamp
+                 *  Username,   type = char
+                 *  Content,    type = text
+                 *
+                 * [How did I create it?]
+                 *  String sql = "CREATE TABLE message_board (Timestamp timestamp, Username char(50), Content text)";
+                 *  stmt.executeUpdate(sql);
+                 */
+
+                // 1. open MySql
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://tww.sytes.net:3306/users", "ptest", "usertest00");
+
+                // 2. Download data
+                Statement stmt = conn.createStatement();
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM message_board");
+
+                // 3. create list
+                card_list = new ArrayList<>();
+                int card_counter = 0;
+
+                while (resultSet.next()) {
+                    Card card = new Card();
+                    card_counter++;
+
+                    card.setId("# " + card_counter);
+                    card.setTimestamp("Time |  " + resultSet.getString(1));
+                    card.setUsername("@" + resultSet.getString(2));
+                    card.setContent(resultSet.getString(3));
+
+                    card_list.add(card);
+                }
+            } catch (Exception e) {
+                error = e.toString();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (error != "") {
+                System.out.println(error);
+            }
+            super.onPostExecute(aVoid);
+        }
+    }
+
 }
